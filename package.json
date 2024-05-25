@@ -1,8 +1,12 @@
 {
+  "scripts": {
+    "start": "nodemon index"
+  },
   "type": "module",
   "dependencies": {
     "express": "^4.19.2",
     "hbs": "^4.2.0",
+    "nodemon": "^3.1.0",
     "pdf-puppeteer": "^1.1.11"
   }
 }
