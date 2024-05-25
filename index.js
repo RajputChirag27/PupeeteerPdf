@@ -1,4 +1,7 @@
 import express from "express";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import convertHTMLToPDF from "pdf-puppeteer";
 
 const app = express();
@@ -18,7 +21,7 @@ const pdfObject = {
   const orders = [
     {
       product: "Fan",
-      description: "Pankha Latakne Ke liye",
+      description: "Pankha for Kota Students",
       quantity: 1,
       amount: 3999,
     },
@@ -120,12 +123,26 @@ const pdfObject = {
 // Routes 
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.get("/pdf", async (req, res) => {
-  await convertHTMLToPDF(html, (pdf) => {
-    res.setHeader("Content-Type", "application/pdf");
-    res.send(pdf);
-  });
+  try {
+    await convertHTMLToPDF(html, async (pdf) => {
+      // Save PDF to a file
+      const filePath = path.join(__dirname, 'invoice.pdf');
+      await fs.promises.writeFile(filePath, pdf);
+
+      // Send PDF as a response
+      res.setHeader("Content-Type", "application/pdf");
+      res.send(pdf);
+    });
+  } catch (error) {
+    console.error('Error generating or writing PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 
 // Listening to the server
