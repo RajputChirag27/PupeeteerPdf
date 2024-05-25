@@ -1,13 +1,14 @@
 import express from "express";
-import path from "path";
 import convertHTMLToPDF from "pdf-puppeteer";
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 3000;
 
 //View Engine
 // app.set("view engine", "hbs");
 
+
+// These Values comes from DB
 const pdfObject = {
     name: "John Doe",
     age: 30,
@@ -28,9 +29,12 @@ const pdfObject = {
       amount: 399,
     }
   ];
+
+  // Total Order Amount Calculator
   
   const totalPrice = orders.reduce((acc, order) => acc + order.amount, 0);
   
+//   Html File passed to pdf puppeeteer
   const html = `
   <!doctype html>
   <html lang="en">
@@ -113,6 +117,8 @@ const pdfObject = {
   </html>`;
   
   
+// Routes 
+
 
 app.get("/pdf", async (req, res) => {
   await convertHTMLToPDF(html, (pdf) => {
@@ -121,12 +127,11 @@ app.get("/pdf", async (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.render("index", pdfObject);
-});
 
-app.listen(3000, () => {
-  console.log("app is listening on port 3000");
+// Listening to the server
+
+app.listen(port, () => {
+  console.log(`App is listening on port ${port}`);
 });
 
 
